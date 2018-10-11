@@ -1,0 +1,33 @@
+cd ~/Documents/
+mkdir blast-tutorial
+cd blast-tutorial/
+mkdir blastdb
+cd blastdb
+curl \
+ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz \
+> ../blastdb/uniprot_sprot.fasta.gz
+ls
+gunzip -k uniprot_sprot.fasta.gz
+makeblastdb -in ./uniprot_sprot.fasta -dbtype prot -out ./uniprot_sprot_r2018_08
+ls
+cd ..
+mkdir data
+cd blastdb
+curl http://eagle.fish.washington.edu/cnidarian/Ab_4denovo_CLC6_a.fa \
+> ../data/Ab_4denovo_CLC6_a.fa
+head ../data/Ab_4denovo_CLC6_a.fa
+cd ../data
+grep -c ">" Ab_4denovo_CLC6_a.fa
+cd ..
+mkdir analyses
+cd data
+blastx \
+-query ../data/Ab_4denovo_CLC6_a.fa \
+-db ../blastdb/uniprot_sprot_r2018_08  \
+-out ../analyses/Ab_4-uniprot_blastx.tab \
+-evalue 1E-20 \
+-num_threads 4 \
+-max_target_seqs 1 \
+-outfmt 6
+head ../analyses/Ab_4-uniprot_blastx.tab
+wc -l ../analyses/Ab_4-uniprot_blastx.tab
